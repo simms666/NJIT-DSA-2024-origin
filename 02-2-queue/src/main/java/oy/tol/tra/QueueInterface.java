@@ -1,112 +1,56 @@
 package oy.tol.tra;
 
-public class QueueImplementation<E> implements QueueInterface<E> {
-    private Object [] itemArray;
-    private int capacity;
-    private int current = 0;
-    private int head = 0;
-    private int tail = -1;
-    private static final int DEFAULT_STACK_SIZE = 10;
+/**
+ * A generic interface to queue class. Queues work following 
+ * the first-in-first-out principle.
+ * Students: Implement this interface in a separate <code>QueueImplementation.java</code> file.
+ *           No implementation in this file!!
+ */
+public interface QueueInterface<E> {
 
-    /**
-     * Allocates a queue with a default capacity.
-     * @throws QueueAllocationException
-     */
-    public QueueImplementation() throws QueueAllocationException {
-        capacity=DEFAULT_STACK_SIZE;
-        itemArray=new Object[DEFAULT_STACK_SIZE];
-    }
+   /**
+    * For querying the size capacity of the queue.
+    @return The number of elements the queue can sizely hold.
+    */
+   public int capacity();
+   
+   /**
+    * Add an element to the queue.
+    * @param element The element to add, must not be null.
+    * @throws QueueAllocationException If the reallocation for the queue failed in case queue needs reallocation.
+    * @throws NullPointerException If the element is null.
+    */
+   public void enqueue(E element) throws QueueAllocationException, NullPointerException;
 
-    /**
-     * @param capacity The capacity of the queue.
-     * @throws QueueAllocationException If cannot allocate room for the internal array.
-     */
-    public QueueImplementation(int capacity) throws QueueAllocationException {
-        if(capacity<2){
-            throw new QueueAllocationException("Capacity must be at least 2.");
-        }
-        this.capacity=capacity;
-        itemArray=new Object[capacity];
-    }
+   /**
+    * Removes an element from the queue.
+    * @return The element from the head of the queue.
+    * @throws QueueIsEmptyException If the queue is empty.
+    */
+   public E dequeue() throws QueueIsEmptyException;
 
-    @Override
-    public int capacity() {
-        return capacity;
-    }
+   /**
+    * Returns the element at the head of the queue, not removing it from the queue.
+    * @return The element in the head of the queue.
+    * @throws QueueIsEmptyException If the queue is empty.
+    */
+   public E element() throws QueueIsEmptyException;
 
-    @Override
-    public void enqueue(E element) throws QueueAllocationException, NullPointerException {
-        if(current==capacity){
-            Object[] tmp=new Object[this.capacity*2+1];
-            int indexOfItemArray=head;
-            int index=0;
-            int loop=current;
-            while(loop-->0){
-                tmp[index++]=itemArray[indexOfItemArray];
-                indexOfItemArray=(indexOfItemArray+1)%capacity;
-            }
-            head=0;
-            tail=index-1;
-            itemArray=tmp;
-            tmp=null;
-            capacity=capacity*2+1;
-        }
-        if(element==null){
-            throw new NullPointerException();
-        }
-        tail=(tail+1)%capacity;
-        itemArray[tail]=element;
-        current++;
-    }
+   /**
+    * Returns the count of elements sizely in the queue.
+    * @return Count of elements in the queue.
+    */
+   public int size();
 
+   /**
+    * Can be used to check if the queue is empty.
+    * @return True if the queue is empty, false otherwise.
+    */
+   public boolean isEmpty();
 
-    @Override
-    public E dequeue() throws QueueIsEmptyException {
-        E returnE =element();
-        head=(head+1)%capacity;
-        current--;
-        return returnE;
-    }
+   /**
+    * Resets the queue to empty state, removing the objects.
+    */
+   public void clear();
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public E element() throws QueueIsEmptyException {
-        if(isEmpty()){
-            throw new QueueIsEmptyException("Cannot dequeue from an empty queue.");
-        }
-        return (E)itemArray[head];
-    }
-
-    @Override
-    public int size() {
-        return current;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return current==0;
-    }
-
-    @Override
-    public void clear() {
-        head=0;
-        tail=-1;
-        current=0;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder("[");
-        int index=head;
-        int loopTime=current;
-        while(loopTime-->0){
-            builder.append(itemArray[index].toString());
-            index=(index+1)%capacity;
-            if(loopTime!=0){
-                builder.append(", ");
-            }
-        }
-        builder.append("]");
-        return builder.toString();
-    }
 }
